@@ -1,4 +1,5 @@
 import FibGrid from './FibGrid';
+import * as utils from './utils';
 
 test('create a new grid', () => {
 	let grid = new FibGrid();
@@ -44,3 +45,15 @@ test('individual cell can be emptied', () => {
 	]);
 });
 
+jest.mock('./utils');
+test('find fib on cell', () => {
+	utils.longestCommonSequence.mockReturnValue({ start: 1, length: 5 });
+	const grid = new FibGrid(5, 5);
+	grid.incrementRowCol(3, 3);
+	grid.incrementRowCol(2, 4);
+	grid.incrementRowCol(4, 4);
+	grid._matchFibOnCell(2, 2);
+	expect(utils.longestCommonSequence.mock.calls.length).toBe(2);
+	expect(utils.longestCommonSequence.mock.calls[0][0]).toEqual([1, 1, 1, 2, 2]);
+	expect(utils.longestCommonSequence.mock.calls[1][0]).toEqual([0, 0, 1, 1, 1]);
+});

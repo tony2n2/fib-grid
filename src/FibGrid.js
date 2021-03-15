@@ -1,3 +1,6 @@
+import { getFibNeighbors } from './FibSequence';
+import * as utils from './utils';
+
 class FibGrid {
 	constructor(rows = 50, columns = 50) {
 		this.rows = rows;
@@ -28,6 +31,67 @@ class FibGrid {
 
 	reset() {
 		this._initGrid();
+	}
+
+	_matchFibOnCell(row, col, length = 5) {
+		let result,
+			results = [];
+		const fibs = getFibNeighbors(this.grid[row][col]);
+		// skip if cell is not in the fib sequence
+		if (fibs === null) return results;
+
+		/**
+		 * there are 4 cases to test
+		 * 1: (length) horizontal neighbor cells with target cell at the centre
+		 * 		e.g. for length === 5 => |X|X|X|X|O|X|X|X|X|
+		 * 2: the above but reversed
+		 * 3: vertical neighbor cells
+		 * 4: same as above but reversed
+		 */
+
+		// extract horizontal neighbor cells to a separate array
+		const fromCol = Math.max(0, col - length + 1);
+		const toCol = Math.min(this.grid[row].length, col + length);
+		const rowNeighbors = this.grid[row].slice(fromCol, toCol);
+		// case 1
+		result = utils.longestCommonSequence(rowNeighbors, fibs);
+		if (result.length >= length) {
+			results.push({ from: [row, fromCol + result.start], to: [row, fromCol + result.start + length] });
+		} else {
+			// case 2
+			result = utils.longestCommonSequence(rowNeighbors.reverse(), fibs);
+			if (result.length >= length) {
+				const reversedStart = toCol - fromCol - result.start - result.length;
+				results.push({
+					from: [row, fromCol + reversedStart],
+					to: [row, fromCol + reversedStart + length],
+				});
+			}
+		}
+
+		// extract vertical neighbor cells to a separate array
+		const fromRow = Math.max(0, row - length + 1);
+		const toRow = Math.min(this.grid.length, row + length);
+		const colNeighbors = [];
+		for (let i = fromRow; i < toRow; i++) {
+			colNeighbors.push(this.grid[i][col]);
+		}
+		// case 3
+		result = utils.longestCommonSequence(colNeighbors, fibs);
+		if (result.length >= length) {
+			results.push({ from: [fromRow + result.start, col], to: [fromRow + result.start + length, col] });
+		} else {
+			// case 4
+			result = utils.longestCommonSequence(colNeighbors.reverse(), fibs);
+			if (result.length >= length) {
+				const reversedStart = toRow - fromRow - result.start - result.length;
+				results.push({
+					from: [fromRow + reversedStart, col],
+					to: [fromRow + reversedStart + length, col],
+				});
+			}
+		}
+		return results;
 	}
 
 	_initGrid() {
