@@ -29,6 +29,22 @@ class FibGrid {
 		this.grid[row][col] = 0;
 	}
 
+	resetRange({ from, to }) {
+		this.grid = this.grid.map((row, rowId) => {
+			if (rowId === from[0] || (rowId > from[0] && rowId < to[0])) {
+				return row.map((cell, colId) => {
+					if (colId === from[1] || (colId > from[1] && colId < to[1])) {
+						return 0;
+					} else {
+						return cell;
+					}
+				});
+			} else {
+				return row;
+			}
+		});
+	}
+
 	reset() {
 		this._initGrid();
 	}
