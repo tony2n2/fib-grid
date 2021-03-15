@@ -26,6 +26,7 @@ code {
 	font-size: xx-small;
 	cursor: pointer;
 	text-align: center;
+	transition: background-color ease 1s;
 }
 .cell:hover {
 	color: red;
