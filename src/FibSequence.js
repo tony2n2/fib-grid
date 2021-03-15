@@ -1,36 +1,36 @@
 /**
  * fibonacci serie with support for random access
  */
-class FibSequence {
-	constructor() {
-		this.fibSeq = [0, 1, 2];
-		this.fibs = Object.create(null);
-		this.fibs[0] = 0;
-		this.fibs[1] = 1;
-		// because keys are unique we have to skip the second '1' in the sequence
-		this.fibs[2] = 2;
-	}
+const fibSeq = [0, 1, 1, 2];
+const fibs = Object.create(null);
+fibs[0] = 0;
+// because keys are unique we have to skip the '1' in the sequence
+fibs[1] = 2;
+fibs[2] = 3;
 
-	getNeightboors(n) {
-		n = parseInt(n);
-		// TODO: if n === NaN
-
-		// extend the cached sequence if necessary
-		let prevOfLast = this.fibSeq[this.fibSeq.length - 2];
-		while (prevOfLast < n) {
-			const last = this.fibSeq[this.fibSeq.length - 1];
-			const next = prevOfLast + last;
-			this.fibSeq.push(next);
-			this.fibs[next] = this.fibSeq.length - 1;
-			prevOfLast = this.fibSeq[this.fibSeq.length - 2];
-		}
-
-		const index = this.fibs[n];
-		if (index !== undefined) {
-			return { prev: index !== 0 ? this.fibSeq[index - 1] : null, next: this.fibSeq[index + 1] };
-		}
-		return null;
-	}
+function _generateFib() {
+	const next = fibSeq[fibSeq.length - 2] + fibSeq[fibSeq.length - 1];
+	fibSeq.push(next);
+	fibs[next] = fibSeq.length - 1;
 }
 
-export default FibSequence;
+export const getFibNeighbors = (n, length = 5) => {
+	n = parseInt(n);
+
+	// extend the cached sequence if necessary
+	while (fibSeq[fibSeq.length - 1] < n) {
+		_generateFib();
+	}
+
+	const index = fibs[n];
+	if (index === undefined) return null;
+
+	// extend the cached sequence if necessary
+	const fromIndex = Math.max(0, index - length + 1);
+	const toIndex = index + length;
+	while (fibSeq.length < toIndex) {
+		_generateFib();
+	}
+
+	return fibSeq.slice(fromIndex, toIndex);
+};
