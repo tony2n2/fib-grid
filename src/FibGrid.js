@@ -33,6 +33,18 @@ class FibGrid {
 		this._initGrid();
 	}
 
+	matchFibOnRowCol(row, col, length = 5) {
+		let results = [];
+		// optimization possible: some tests can be skipped on the target row/column
+		for (let i = 0; i < this.grid.length; i++) {
+			results = [...results, ...this._matchFibOnCell(i, col, length)];
+		}
+		for (let i = 0; i < this.grid[row].length; i++) {
+			results = [...results, ...this._matchFibOnCell(row, i, length)];
+		}
+		return results;
+	}
+
 	_matchFibOnCell(row, col, length = 5) {
 		let result,
 			results = [];
