@@ -1,9 +1,8 @@
 /**
  * fibonacci serie with support for random access
  */
-const fibSeq = [0, 1, 1, 2];
+const fibSeq = [1, 1, 2];
 const fibs = Object.create(null);
-fibs[0] = 0;
 // because keys are unique we have to skip the '1' in the sequence
 fibs[1] = 2;
 fibs[2] = 3;
