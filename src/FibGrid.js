@@ -78,7 +78,7 @@ class FibGrid {
 		 */
 
 		// extract horizontal neighbor cells to a separate array
-		const fromCol = Math.max(0, col - length + 1);
+		const fromCol = Math.max(0, col - length);
 		const toCol = Math.min(this.grid[row].length, col + length);
 		const rowNeighbors = this.grid[row].slice(fromCol, toCol);
 		// case 1
@@ -98,7 +98,7 @@ class FibGrid {
 		}
 
 		// extract vertical neighbor cells to a separate array
-		const fromRow = Math.max(0, row - length + 1);
+		const fromRow = Math.max(0, row - length);
 		const toRow = Math.min(this.grid.length, row + length);
 		const colNeighbors = [];
 		for (let i = fromRow; i < toRow; i++) {
@@ -120,6 +120,44 @@ class FibGrid {
 			}
 		}
 		return results;
+	}
+
+
+	/**
+	 * look for fib sequence in array of minimal minLength (unused)
+	 * @returns start & end position if found null otherwise
+	 */
+	 _matchFibOnArray(arr, minLength = 5) {
+		const midIndex = Math.floor((arr.length - 1) / 2);
+		let midFib = getFibNeighbors(arr[midIndex]);
+		if (midFib === null) return null;
+
+		// custom logic to
+
+		// check from midIndex backward to begin of array
+		let currIndex = midIndex - 1,
+			currFib = midFib,
+			start = midIndex,
+			length = 1,
+			sawOne = false;
+		while (currIndex >= 0 && currFib !== null && arr[currIndex] === currFib.prev) {
+			length += 1;
+			start = currIndex;
+			if (currFib.prev !== 1 || sawOne) {
+				currFib = getFibNeighbors(currFib.prev);
+				sawOne = true;
+			}
+			console.log(currFib, currIndex, sawOne);
+			currIndex -= 1;
+		}
+		currIndex = midIndex + 1;
+		currFib = midFib;
+		while (currIndex < arr.length && arr[currIndex] === currFib.next) {
+			length += 1;
+			currFib = getFibNeighbors(currFib.next);
+			currIndex += 1;
+		}
+		return { start, length };
 	}
 
 	_initGrid() {
